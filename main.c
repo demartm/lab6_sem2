@@ -201,6 +201,10 @@ if(arr){
               arr[arr_ix + 1] = ' ';
               arr_ix += 2;
             }
+if(st->size == 0){
+printf("error 2!");
+return;
+}
 
             if(st->size){
               popFromStack(st);
@@ -220,10 +224,16 @@ if(arr){
     }
 
   }
-while(st->size){
+bool cont = true;
+while(st->size && cont){
   arr[arr_ix] = popFromStack(st);
+if(arr[arr_ix] == open){
+printf("error!");
+return;
+}
   arr[arr_ix + 1] = ' ';
   arr_ix += 2;
+
 }
 printf("%s\n",arr);
 }
@@ -236,7 +246,7 @@ printf("%s\n",arr);
 int main()
 {
 
-char expression[17][50] = {
+char expression[18][50] = {
 {"-(1+2)+3*4*(5-6)"},
 {"-1+2*-2+3*4*(5-6)"},
 {"(1+(2-(3+(4-(5+(6-(7+(8-9))))))))"},
@@ -254,9 +264,10 @@ char expression[17][50] = {
 {"1"},
 {"1*2*3*4*5*6*7*8*9"},
 {"1+2*3-4/5+6*7-8"},
+{"1+)2*3-4/5+6*7-8"},
 }
 ;//"1+2+3*4       *(5-6)";
-for(int i = 0; i < 17; i++){
+for(int i = 0; i < sizeof(expression)/50; i++){
   priorityLowEqual(expression[i]);
 }
 
