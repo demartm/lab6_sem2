@@ -36,7 +36,7 @@ if(st){
 int popFromStack(struct stack* st/*,int *code*/){
 if(st){
 
-  if(/*st->size > 0 && */st->next){
+  if(st->next){
 
     int res = st->next->x;
     struct point* next = st->next->next;
@@ -46,20 +46,12 @@ if(st){
 
     st->size = st->size - 1;
 
-    //*code = 0;
     return res;
   }
-  // else{
-  //   if(code){
-  //     *code = -1;
-  //   }
-  // }
 
 }
-  // if(code){
-  //     *code = -2;
-  //   }
-return 0;//TODO
+
+return 0;
 }
 
 void freeStack(struct stack** st){
@@ -356,7 +348,7 @@ char expression[18][50] = {
 {"++1++2*(3-4*(5+6/7)-8)*9"},
 {"((1+2)*((3+4)*(5+6)))"},
 {"+-++-(((1)))"},
-{"1 2"},//TODO
+{"1+2"},//TODO
 {"1*2*3*4*5a*6*7*8*9"},
 {"1+2*3-4/5+6*7-8"},
 {"1++2******3-4/5+6*7-8"},
