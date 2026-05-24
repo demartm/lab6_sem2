@@ -130,10 +130,18 @@ if(arr){
   Tab[open] = 4;
   Tab[close] = 5;
   Tab[space] = 6;
+  //bool is_closed = true;
 
   size_t ex_size = strlen(expression);
 
+  char last = 0;
+
   for(size_t i = 0; i < ex_size; i++){
+
+  if(i > 0 && Tab[expression[i - 1]] < 6/*(Tab[expression[i - 1]] < 6 || Tab[expression[i]]*/){
+    last = expression[i - 1];
+  }
+
     if(Tab[expression[i]] == 1){
 
       //printf("%c<number>",expression[i]);
@@ -146,12 +154,22 @@ if(arr){
 
         //printf("%c<low>",expression[i]);
 
-        if(st->next && (Tab[st->next->x] == 2 || Tab[st->next->x] == 3)){
+        if(last == 0 || (Tab[last] > 1 && Tab[last] < 6 && Tab[last] < 4)){
+          arr[arr_ix] = '0';//popFromStack(st);
+          arr[arr_ix + 1] = ' ';
+          arr_ix += 2;
+        pushToStack(st,expression[i]);
+
+        }else{
+
+        while(st->next && (Tab[st->next->x] == 2 || Tab[st->next->x] == 3)){
           arr[arr_ix] = popFromStack(st);
           arr[arr_ix + 1] = ' ';
           arr_ix += 2;
         }
+
         pushToStack(st,expression[i]);
+}
 
 
 
@@ -218,7 +236,9 @@ printf("%s\n",arr);
 int main()
 {
 
-char expression[16][50] = {{"1+2+3*4       *(5-6)"},
+char expression[17][50] = {
+{"-(1+2)+3*4*(5-6)"},
+{"-1+2*-2+3*4*(5-6)"},
 {"(1+(2-(3+(4-(5+(6-(7+(8-9))))))))"},
 {"1-2-3-4-5"},
 {"1/2/3/4"},
@@ -236,7 +256,7 @@ char expression[16][50] = {{"1+2+3*4       *(5-6)"},
 {"1+2*3-4/5+6*7-8"},
 }
 ;//"1+2+3*4       *(5-6)";
-for(int i = 0; i < 16; i++){
+for(int i = 0; i < 17; i++){
   priorityLowEqual(expression[i]);
 }
 
