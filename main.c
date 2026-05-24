@@ -365,12 +365,12 @@ char expression[18][50] = {
 int code = 0;
 for(int i = 0; i < sizeof(expression)/50; i++){
   char *arr = convertToRPN(expression[i],&code);
-if(arr){
-printf("%s\n",arr);
-printf("solve:%d\n\n",calculate(arr));
-}else{
-printf("error %d\n",code);
-}
+  if(arr){
+    printf("%s\n",arr);
+    printf("solve:%d\n\n",calculate(arr));
+  }else{
+    printf("error %d\n",code);
+  }
 }
 
 return 0;
