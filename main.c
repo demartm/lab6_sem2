@@ -96,8 +96,11 @@ if(expression){
 
 unsigned char Tab[256] = {0};
 unsigned char numbers[10] = {'0','1','2','3','4','5','6','7','8','9'};
-unsigned char low_prior[3] = {'+','-','('};
-unsigned char high_prior[3] = {'/','*',')'};
+unsigned char low_prior[3] = {'+','-'};
+unsigned char high_prior[3] = {'/','*'};
+unsigned char open = '(';
+unsigned char close = ')';
+unsigned char space = ' ';
 
 size_t sizeNums = sizeof(numbers);
 size_t sizeLow = sizeof(low_prior);
@@ -114,6 +117,9 @@ for(int i = 0; i < sizeLow; i++){
 for(int i = 0; i < sizeHigh; i++){
   Tab[high_prior[i]] = 3;
 }
+Tab[open] = 4;
+Tab[close] = 5;
+Tab[space] = 6;
 
 size_t ex_size = strlen(expression);
 for(size_t i = 0; i < ex_size; i++){
@@ -125,7 +131,20 @@ for(size_t i = 0; i < ex_size; i++){
     }else{
       if(Tab[expression[i]] == 3){
         printf("%c<high>",expression[i]);
+      }else{
+      if(Tab[expression[i]] == 4){
+        printf("%c<open>",expression[i]);
+      }else{
+        if(Tab[expression[i]] == 5){
+          printf("%c<close>",expression[i]);
+        } else{
+          if(Tab[expression[i]] != 6){
+            printf("incorrect operand");
+            i = ex_size;
+          }
+        }
       }
+    }
     }
   }
 
@@ -139,7 +158,7 @@ for(size_t i = 0; i < ex_size; i++){
 int main()
 {
 
-char expression[] = "1+2+3*4";
+char expression[] = "1+2+3*4       *(5-6)";
 priorityLowEqual(expression);
 
 return 0;
