@@ -94,62 +94,122 @@ if(st){
 void priorityLowEqual(char* expression){
 if(expression){
 
-unsigned char Tab[256] = {0};
-unsigned char numbers[10] = {'0','1','2','3','4','5','6','7','8','9'};
-unsigned char low_prior[3] = {'+','-'};
-unsigned char high_prior[3] = {'/','*'};
-unsigned char open = '(';
-unsigned char close = ')';
-unsigned char space = ' ';
+char *arr = (char*)calloc(strlen(expression) * 2 + 1,1);
+if(arr){
 
-size_t sizeNums = sizeof(numbers);
-size_t sizeLow = sizeof(low_prior);
-size_t sizeHigh = sizeof(high_prior);
+  struct stack* st = (struct stack*)calloc(sizeof(struct stack),1);
 
-for(int i = 0; i < sizeNums; i++){
-  Tab[numbers[i]] = 1;
-}
+  if(st){
 
-for(int i = 0; i < sizeLow; i++){
-  Tab[low_prior[i]] = 2;
-}
+  unsigned char Tab[256] = {0};
+  unsigned char numbers[10] = {'0','1','2','3','4','5','6','7','8','9'};
+  unsigned char low_prior[3] = {'+','-'};
+  unsigned char high_prior[3] = {'/','*'};
+  unsigned char open = '(';
+  unsigned char close = ')';
+  unsigned char space = ' ';
 
-for(int i = 0; i < sizeHigh; i++){
-  Tab[high_prior[i]] = 3;
-}
-Tab[open] = 4;
-Tab[close] = 5;
-Tab[space] = 6;
 
-size_t ex_size = strlen(expression);
-for(size_t i = 0; i < ex_size; i++){
-  if(Tab[expression[i]] == 1){
-    printf("%c<number>",expression[i]);
-  }else{
-    if(Tab[expression[i]] == 2){
-      printf("%c<low>",expression[i]);
+  size_t sizeNums = sizeof(numbers);
+  size_t sizeLow = sizeof(low_prior);
+  size_t sizeHigh = sizeof(high_prior);
+
+  size_t arr_ix = 0;
+
+  for(int i = 0; i < sizeNums; i++){
+    Tab[numbers[i]] = 1;
+  }
+
+  for(int i = 0; i < sizeLow; i++){
+    Tab[low_prior[i]] = 2;
+  }
+
+  for(int i = 0; i < sizeHigh; i++){
+    Tab[high_prior[i]] = 3;
+  }
+  Tab[open] = 4;
+  Tab[close] = 5;
+  Tab[space] = 6;
+
+  size_t ex_size = strlen(expression);
+
+  for(size_t i = 0; i < ex_size; i++){
+    if(Tab[expression[i]] == 1){
+
+      //printf("%c<number>",expression[i]);
+      arr[arr_ix] = expression[i];
+      arr[arr_ix + 1] = ' ';
+      arr_ix += 2;
+
     }else{
-      if(Tab[expression[i]] == 3){
-        printf("%c<high>",expression[i]);
+      if(Tab[expression[i]] == 2){
+
+        //printf("%c<low>",expression[i]);
+
+        if(st->next && (Tab[st->next->x] == 2 || Tab[st->next->x] == 3)){
+          arr[arr_ix] = popFromStack(st);
+          arr[arr_ix + 1] = ' ';
+          arr_ix += 2;
+        }
+        pushToStack(st,expression[i]);
+
+
+
       }else{
-      if(Tab[expression[i]] == 4){
-        printf("%c<open>",expression[i]);
-      }else{
-        if(Tab[expression[i]] == 5){
-          printf("%c<close>",expression[i]);
-        } else{
-          if(Tab[expression[i]] != 6){
-            printf("incorrect operand");
-            i = ex_size;
+        if(Tab[expression[i]] == 3){
+
+          //printf("%c<high>",expression[i]);
+        if(st->next && Tab[st->next->x] == 3){
+          arr[arr_ix] = popFromStack(st);
+          arr[arr_ix + 1] = ' ';
+          arr_ix += 2;
+        }
+        pushToStack(st,expression[i]);
+
+        }else{
+        if(Tab[expression[i]] == 4){
+
+          //printf("%c<open>",expression[i]);
+          pushToStack(st,expression[i]);
+
+        }else{
+          if(Tab[expression[i]] == 5){
+
+            //printf("%c<close>",expression[i]);
+            while(st->size != 0 && st->next->x != open){
+
+              arr[arr_ix] = popFromStack(st);
+              //if(arr[arr_ix] == 0)
+              arr[arr_ix + 1] = ' ';
+              arr_ix += 2;
+            }
+
+            if(st->size){
+              popFromStack(st);
+            }
+
+          } else{
+            if(Tab[expression[i]] != 6){
+
+              printf("incorrect operand");
+              i = ex_size;
+
+            }
           }
         }
       }
+      }
     }
-    }
+
   }
-
+while(st->size){
+  arr[arr_ix] = popFromStack(st);
+  arr[arr_ix + 1] = ' ';
+  arr_ix += 2;
 }
-
+printf("   %s   ",arr);
+}
+}
 }
 }
 
