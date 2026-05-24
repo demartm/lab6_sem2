@@ -91,7 +91,8 @@ if(st){
 
 //fillTab()
 
-void priorityLowEqual(char* expression){
+char *convertToRPN(char* expression,int *result){
+  int code = 0;
 if(expression){
 
 char *arr = (char*)calloc(strlen(expression) * 2 + 1,1);
@@ -136,22 +137,24 @@ if(arr){
 
   char last = 0;
 
-  for(size_t i = 0; i < ex_size; i++){
+  for(size_t i = 0; i < ex_size && !code; i++){
 
   if(i > 0 && Tab[expression[i - 1]] < 6/*(Tab[expression[i - 1]] < 6 || Tab[expression[i]]*/){
     last = expression[i - 1];
   }
 if(last && expression[i] != '-' && Tab[expression[i]] > 1 && Tab[expression[i]] < 4 && Tab[last] > 1 && Tab[last] < 4){
-printf("error 3");
-return;
-}
+// printf("error 3");
+// return;
+code = 1;
+i = ex_size;
+}else{
 
     if(Tab[expression[i]] == 1){
 
       //printf("%c<number>",expression[i]);
       arr[arr_ix] = expression[i];
-      arr[arr_ix + 1] = ' ';
-      arr_ix += 2;
+      //arr[arr_ix + 1] = ' ';
+      arr_ix ++;//+= 2;
 
     }else{
       if(Tab[expression[i]] == 2){
@@ -159,17 +162,17 @@ return;
         //printf("%c<low>",expression[i]);
 
         if(last == 0 || (Tab[last] > 1 && Tab[last] < 6 && Tab[last] < 4)){
-        //   arr[arr_ix] = '0';//popFromStack(st);
-        //   arr[arr_ix + 1] = ' ';
-        //   arr_ix += 2;
-        // pushToStack(st,expression[i]);
-        pushToStack(st,'~');
+          arr[arr_ix] = '0';//popFromStack(st);
+          //arr[arr_ix + 1] = ' ';
+          arr_ix ++;//+= 2;
+        pushToStack(st,expression[i]);
+       // pushToStack(st,'~');
         }else{
 
-        while(st->next && (Tab[st->next->x] == 2 || Tab[st->next->x] == 3 || st->next->x == '~')){
+        while(st->next && (Tab[st->next->x] == 2 || Tab[st->next->x] == 3/* || st->next->x == '~'*/)){
           arr[arr_ix] = popFromStack(st);
-          arr[arr_ix + 1] = ' ';
-          arr_ix += 2;
+          //arr[arr_ix + 1] = ' ';
+          arr_ix ++;//+= 2;
         }
 
         pushToStack(st,expression[i]);
@@ -181,10 +184,10 @@ return;
         if(Tab[expression[i]] == 3){
 
           //printf("%c<high>",expression[i]);
-        if(st->next && (Tab[st->next->x] == 3|| st->next->x == '~')){
+        if(st->next && (Tab[st->next->x] == 3/*|| st->next->x == '~'*/)){
           arr[arr_ix] = popFromStack(st);
-          arr[arr_ix + 1] = ' ';
-          arr_ix += 2;
+          //arr[arr_ix + 1] = ' ';
+          arr_ix ++;//+= 2;
         }
         pushToStack(st,expression[i]);
 
@@ -202,22 +205,26 @@ return;
 
               arr[arr_ix] = popFromStack(st);
               //if(arr[arr_ix] == 0)
-              arr[arr_ix + 1] = ' ';
-              arr_ix += 2;
+              //arr[arr_ix + 1] = ' ';
+              arr_ix ++;//+= 2;
             }
 if(st->size == 0){
-printf("error 2!");
-return;
-}
+code = 2;
+i = ex_size;
+// printf("error 2!");
+// return;
+}else{
 
             if(st->size){
               popFromStack(st);
             }
+}
 
           } else{
             if(Tab[expression[i]] != 6){
 
-              printf("incorrect operand");
+              //printf("incorrect operand");
+              code = 3;
               i = ex_size;
 
             }
@@ -226,23 +233,38 @@ return;
       }
       }
     }
-
+}
   }
 bool cont = true;
 while(st->size && cont){
   arr[arr_ix] = popFromStack(st);
 if(arr[arr_ix] == open){
-printf("error!");
-return;
+code = 4;
+// printf("error!");
+// return;
 }
-  arr[arr_ix + 1] = ' ';
-  arr_ix += 2;
+  //arr[arr_ix + 1] = ' ';
+  arr_ix ++;//+= 2;
 
 }
-printf("%s\n",arr);
+//printf("%s\n",arr);
+if(!code){
+return arr;
 }
+
+}else{
+code = 5;
 }
+}else{
+code = 6;
 }
+} else{
+code = 7;
+}
+if(result){
+*result = code;
+}
+return NULL;
 }
 
 
@@ -252,7 +274,7 @@ int main()
 
 char expression[18][50] = {
 {"-(1+2)+3*4*(5-6)"},
-{"-1+2*-2+3*4*(5-6)"},
+{"-1+2+-2+3*4*(5-6)"},
 {"(1+(2-(3+(4-(5+(6-(7+(8-9))))))))"},
 {"1-2-3-4-5"},
 {"1/2/3/4"},
@@ -266,13 +288,19 @@ char expression[18][50] = {
 {"((1+2)*((3+4)*(5+6)))"},
 {"(((1)))"},
 {"1"},
-{"1*2*3*4*5*6*7*8*9"},
+{"1*2*3*4*5a*6*7*8*9"},
 {"1+2*3-4/5+6*7-8"},
 {"1++2******3-4/5+6*7-8"},
 }
 ;//"1+2+3*4       *(5-6)";
+int code = 0;
 for(int i = 0; i < sizeof(expression)/50; i++){
-  priorityLowEqual(expression[i]);
+  char *arr = convertToRPN(expression[i],&code);
+if(arr){
+printf("%s\n",arr);
+}else{
+printf("error %d\n",code);
+}
 }
 
 return 0;
