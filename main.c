@@ -142,7 +142,7 @@ if(arr){
   if(i > 0 && Tab[expression[i - 1]] < 6){
     last = expression[i - 1];
   }
-  if(last && expression[i] != '-' && Tab[expression[i]] > 1 && Tab[expression[i]] < 4 && Tab[last] > 1 && Tab[last] < 4){
+  if(last && Tab[expression[i]] > 2 && Tab[expression[i]] < 4 && Tab[last] > 1 && Tab[last] < 4){
     code = 1;
     i = ex_size;
   }else{
@@ -155,11 +155,12 @@ if(arr){
     }else{
       if(Tab[expression[i]] == 2){
 
-        if(last == 0 || (Tab[last] > 1 && Tab[last] < 6 && Tab[last] < 4)){
-
+        if(last == 0 || (Tab[last] > 1 && Tab[last] < 4)){
+          if(expression[i] == '-'){
           arr[arr_ix] = '0';
           arr_ix ++;
           pushToStack(st,expression[i]);
+        }
         }else{
 
           while(st->next && (Tab[st->next->x] == 2 || Tab[st->next->x] == 3)){
@@ -269,9 +270,9 @@ char expression[18][50] = {
 {"1*(2+3*(4+5*(6+7)))"},
 {"((1+2)*3-4)/5"},
 {"1-(2-(3-(4-5)))"},
-{"1+2*(3-4*(5+6/7)-8)*9"},
+{"++1++2*(3-4*(5+6/7)-8)*9"},
 {"((1+2)*((3+4)*(5+6)))"},
-{"(((1)))"},
+{"+-++-(((1)))"},
 {"1 2"},//TODO
 {"1*2*3*4*5a*6*7*8*9"},
 {"1+2*3-4/5+6*7-8"},
