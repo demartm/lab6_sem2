@@ -254,31 +254,32 @@ if(expression){
 
   unsigned char Tab[256] = {0};
   unsigned char numbers[10] = {'0','1','2','3','4','5','6','7','8','9'};
-  unsigned char low_prior[3] = {'+','-'};
-  unsigned char high_prior[3] = {'/','*'};
-  unsigned char open = '(';
-  unsigned char close = ')';
-  unsigned char space = ' ';
+// unsigned char operands[6] = {'+','-',};
+//   unsigned char low_prior[3] = {'+','-'};
+//   unsigned char high_prior[3] = {'/','*'};
+//   unsigned char open = '(';
+//   unsigned char close = ')';
+//   unsigned char space = ' ';
 
 
   size_t sizeNums = sizeof(numbers);
-  size_t sizeLow = sizeof(low_prior);
-  size_t sizeHigh = sizeof(high_prior);
+  // size_t sizeLow = sizeof(low_prior);
+  // size_t sizeHigh = sizeof(high_prior);
 
   for(int i = 0; i < sizeNums; i++){
     Tab[numbers[i]] = 1;
   }
 
-  for(int i = 0; i < sizeLow; i++){
-    Tab[low_prior[i]] = 2;
-  }
+  // for(int i = 0; i < sizeLow; i++){
+  //   Tab[low_prior[i]] = 2;
+  // }
 
-  for(int i = 0; i < sizeHigh; i++){
-    Tab[high_prior[i]] = 3;
-  }
-  Tab[open] = 4;
-  Tab[close] = 5;
-  Tab[space] = 6;
+  // for(int i = 0; i < sizeHigh; i++){
+  //   Tab[high_prior[i]] = 3;
+  // }
+  // Tab[open] = 4;
+  // Tab[close] = 5;
+  // Tab[space] = 6;
 
 
 
