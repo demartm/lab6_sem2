@@ -95,7 +95,7 @@ int code = 0;
 
 if(file && Tab && str){
 
-FILE *f = fopen(file,"rb");
+FILE *f = fopen(file,"r");
 if(f){
 
   char *buff = (char*)calloc(max_length+1,1);
