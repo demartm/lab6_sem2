@@ -84,8 +84,6 @@ struct point* cur = st->next;
     cur = next;
   }
 
-  // free(*st);
-  // (*st) = NULL;
 
 }
 }
@@ -139,9 +137,6 @@ buff[size] = '\0';
 }else{
 
 code = 4;
-//free(buff);
-//free(*Tab);
-//*Tab = NULL;
 
 }
 }else{
@@ -154,9 +149,7 @@ code = 4;
   if(fclose(f) != 0){
     code = 2;
   }
-// } else {
-// code = 3;
-// }
+
 }else{
 code = 4;
 }
@@ -181,13 +174,7 @@ if(expression){
   #define _space 7
   */
 
-  struct stack st = {0};//*st = (struct stack*)calloc(1,sizeof(struct stack));
- // if(st){
-
-  //size_t max_rpn =  max_length * 2;//uslovno
-
-  //char *arr = expression;//(char*)calloc(max_rpn+ 1,1);
-  // if(arr){
+  struct stack st = {0};
 
       char Tab[256] = {0};
 
@@ -218,7 +205,7 @@ if(expression){
 
     for(size_t i = 0; i < ex_size; i++){
 
-      if(i > 0 && /*Tab[expression[i - 1]] > operands &&*/ Tab[expression[i - 1]] < _space){
+      if(i > 0 && Tab[expression[i - 1]] < _space){
         last = expression[i - 1];
       }
 
@@ -354,7 +341,6 @@ if(code == 0){
   //return code;
 }else{
 code = 7;
-//free(arr);
 
 }
 if(arr_ix < max_rpn){
@@ -362,20 +348,11 @@ arr[arr_ix] = '\0';
 }
 
 clearStack(&st);
-// }else{
-//   code = 6;
-//   clearStack(&st);
-// }
-// }else{
-//   code = 5;
-// }
-//}
+
 }else {
   code = 3;
 }
-// if(err_code){
-//   *err_code = code;
-// }
+
 return code;
 
 }
@@ -432,7 +409,7 @@ i = ex_size;
               } else {
                 if(expression[i] == '='){
                 if(!equality){
-                  //pushToStack(&st,temp2,name2);
+
                   if(expression[0] >= 'a' && expression[0] <= 'z' || expression[0] >= 'A' && expression[0]<= 'Z'){
                       *prefix = expression[0];//buf;
                       equality = true;
@@ -463,10 +440,7 @@ if(st.size == 1 && code == 0){
   return res;
 }
 clearStack(&st);
-//   }else{
 
-// code = 3;
-// }
 } else{
 
 code = 4;
