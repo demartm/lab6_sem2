@@ -345,6 +345,7 @@ if(code == 0){
   return arr;
 }else{
 code = 7;
+free(arr);
 
 }
 freeStack(&st);
