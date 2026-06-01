@@ -42,7 +42,7 @@ if(st){
   }
 
 }
-  return;
+
 }
 
 void popFromStack(struct stack* st,double *x, char *cx/*,double *num,char* cx*/){
@@ -96,11 +96,8 @@ if(file && Tab && str){
 FILE *f = fopen(file,"r");
 if(f){
 
-  char *buff = str;//(char*)calloc(max_length+1,1);
- // if(buff){
-    //*Tab = (int*)calloc(256,sizeof(int));
+  char *buff = str;
 
-    //if(*Tab){
     char b = 0;
 
     size_t size = 0;
@@ -139,12 +136,7 @@ buff[size] = '\0';
 code = 4;
 
 }
-// }else{
 
-//   //free(buff);
-//   code = 1;
-
-// }
 }
   if(fclose(f) != 0){
     code = 2;
@@ -158,7 +150,7 @@ return code;
 
 
 
-int convertToRPN(char *expression,char*arr,size_t max_rpn){
+int convertToRPN(char *expression,char *arr,size_t max_rpn){
 int code = 0;
 if(expression){
 
@@ -459,7 +451,7 @@ int Tab[256]={0};// NULL;
 char str[2000] = {0};
 char arr[2000] = {0};
 int code = 0;
-char file[] = "test.txt";//"test2.txt";//"test3.txt";//"test4.txt";//"test5.txt";//"test6.txt";//"test7.txt";//"test8.txt";//"test9.txt";//"test10.txt";//"test11.txt";//"test12.txt";//"test13.txt";//"test14.txt";//"test15.txt";//"test16.txt";//"test17.txt";//"test18.txt";//"test19.txt";//"test20.txt";
+char file[] = "test18.txt";//"test2.txt";//"test3.txt";//"test4.txt";//"test5.txt";//"test6.txt";//"test7.txt";//"test8.txt";//"test9.txt";//"test10.txt";//"test11.txt";//"test12.txt";//"test13.txt";//"test14.txt";//"test15.txt";//"test16.txt";//"test17.txt";//"test18.txt";//"test19.txt";//"test20.txt";
 if((code = parseFile(file,Tab,str,max_len)) != 0){
   printf("error %d",code);
 }
