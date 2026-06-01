@@ -73,6 +73,7 @@ if(st){
 return;
 }
 
+
 void freeStack(struct stack** st){
 if(st && *st){
 
@@ -245,7 +246,7 @@ if(expression){
       }else{
 
         if(Tab[expression[i]] == low_prio){
-          if(last == 0 || (Tab[last] > operands && Tab[last] < open_br  || Tab[last] == equ)) {//unary minus
+          if(last == 0 || (Tab[last] > operands && Tab[last] <= open_br  || Tab[last] == equ)) {//unary minus
               if(expression[i] == '-'){
                 if(arr_ix < max_rpn){
                   arr[arr_ix] = '0';
