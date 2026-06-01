@@ -46,9 +46,9 @@ if(st){
 }
 
 void popFromStack(struct stack* st,double *num,char* cx){
-if(st){
+if(st && st->top){
 
-  if(st->top){
+  //if(st->top){
 
     double res = st->top->x;
     char res_c = st->top->cx;
@@ -66,7 +66,7 @@ if(st){
       *cx = res_c;
     }
 
-  }
+  //}
 
 }
 
@@ -383,7 +383,8 @@ if(expression && Tab && prefix){
     for(size_t i = 0; i < ex_size;i++){
 
       if(expression[i] >= 'a' && expression[i] <= 'z' || expression[i] >= 'A' && expression[i] <= 'Z'|| expression[i] >= '0' && expression[i] <= '9'){//Tab[expression[i]] || expression[i] == '0' || i == 0){
-        pushToStack(&st,Tab[expression[i]],expression[i]);//for = symbol
+      pushToStack(&st,Tab[expression[i]],expression[i]);//for = symbol
+
 
       }else{
 if(st.size < 2){
@@ -445,6 +446,10 @@ if(st.size == 1 && code == 0){
   popFromStack(&st,&res,NULL);
   clearStack(&st);
   return res;
+}else{
+  if(st.size >= 2){
+    code = 13;
+  }
 }
 clearStack(&st);
 
