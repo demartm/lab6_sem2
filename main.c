@@ -22,7 +22,7 @@ struct point *next;
 };
 struct stack {
 
-struct point *next;
+struct point *top;
 size_t size;
 
 };
@@ -36,8 +36,8 @@ if(st){
   if(el){
     el->x = x;
     //el->cx = cx;
-    el->next = st->next;
-    st->next = el;
+    el->next = st->top;
+    st->top = el;
     st->size = st->size + 1;
   }
 
@@ -48,14 +48,14 @@ if(st){
 void popFromStack(struct stack* st,double *x, char *cx/*,double *num,char* cx*/){
 if(st){
 
-  if(st->next){
+  if(st->top){
 
-    double res = st->next->x;
+    double res = st->top->x;
     //char res_c = st->next->cx;
-    struct point* next = st->next->next;
+    struct point* next = st->top->next;
 
-    free(st->next);
-    st->next = next;
+    free(st->top);
+    st->top = next;
 
     st->size = st->size - 1;
     if(x){
@@ -76,7 +76,7 @@ if(st){
 void clearStack(struct stack* st){
 if(st){
 
-struct point* cur = st->next;
+struct point* cur = st->top;
 
   while(cur){
     struct point* next = cur->next;
@@ -225,7 +225,7 @@ if(expression){
                 pushToStack(&st,expression[i]);
                }
           }else{
-            while(st.next && (Tab[(int)(st.next->x)] == low_prio || Tab[(int)(st.next->x)] == high_prio)){
+            while(st.top && (Tab[(int)(st.top->x)] == low_prio || Tab[(int)(st.top->x)] == high_prio)){
               char buf = 0;
               popFromStack(&st,NULL,&buf);
               if(arr_ix < max_rpn){
@@ -242,7 +242,7 @@ if(expression){
 
           if(Tab[expression[i]] == high_prio){
 
-            if(st.size > 0 && (Tab[(int)(st.next->x)] == high_prio)){
+            if(st.size > 0 && (Tab[(int)(st.top->x)] == high_prio)){
                 char buf = 0;
                 popFromStack(&st,NULL,&buf);
               if(arr_ix < max_rpn){
@@ -263,7 +263,7 @@ if(expression){
             } else {
               if(Tab[expression[i]] == close_br){
 
-            while(st.size > 0 && Tab[(int)(st.next->x)] != open_br){
+            while(st.size > 0 && Tab[(int)(st.top->x)] != open_br){
                 char buf = 0;
                 popFromStack(&st,NULL,&buf);
               if(arr_ix < max_rpn){
@@ -285,7 +285,7 @@ if(expression){
             }
               } else {
                 if(Tab[expression[i]] == equ){
-                   while(st.next && Tab[(int)(st.next->x)] != open_br){
+                   while(st.top && Tab[(int)(st.top->x)] != open_br){
                     char buf = 0;
                     popFromStack(&st,NULL,&buf);
                   if(arr_ix < max_rpn){
