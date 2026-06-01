@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define max_length 2000
+#define max_len 2000
 #define operands 1
 #define low_prio 2
 #define high_prio 3
@@ -74,10 +74,10 @@ return;
 }
 
 
-void freeStack(struct stack** st){
-if(st && *st){
+void clearStack(struct stack* st){
+if(st){
 
-struct point* cur = (*st)->next;
+struct point* cur = st->next;
 
   while(cur){
     struct point* next = cur->next;
@@ -85,13 +85,10 @@ struct point* cur = (*st)->next;
     cur = next;
   }
 
-  free(*st);
-  (*st) = NULL;
-
 }
 }
 
-int parseFile(char *file, int **Tab, char **str){
+int parseFile(char *file, int *Tab, char *str,size_t max_length){
 int code = 0;
 
 if(file && Tab && str){
@@ -99,11 +96,9 @@ if(file && Tab && str){
 FILE *f = fopen(file,"r");
 if(f){
 
-  char *buff = (char*)calloc(max_length+1,1);
+  char *buff = str;
   if(buff){
-    *Tab = (int*)calloc(256,sizeof(int));
 
-    if(*Tab){
     char b = 0;
 
     size_t size = 0;
@@ -121,33 +116,28 @@ if(size < max_length){
     int res = 0;
     while(res != -1){
 
-      res = fscanf(f," %c = %d",&b,&ch);
+      res = fscanf(f,"%c=%d",&b,&ch);
       if(res == 2){
 
-          (*Tab)[b] = ch;
+          Tab[b] = ch;
       }
     }
 
 for( char a = '0'; a <='9'; a++){
-   (*Tab)[a] = a - 48;
+   Tab[a] = a - 48;
 }
 
 
 buff[size] = '\0';
-*str = buff;
 
 
 }else{
 
 code = 4;
-free(buff);
-free(*Tab);
-*Tab = NULL;
 
 }
 }else{
 
-  free(buff);
   code = 1;
 
 }
@@ -155,9 +145,7 @@ free(*Tab);
   if(fclose(f) != 0){
     code = 2;
   }
-} else {
-code = 3;
-}
+
 }else{
 code = 4;
 }
@@ -166,7 +154,7 @@ return code;
 
 
 
-char *convertToRPN(char *expression,int *err_code){
+int convertToRPN(char *expression,char*arr,size_t max_rpn){
 int code = 0;
 if(expression){
 
@@ -182,37 +170,17 @@ if(expression){
   #define _space 7
   */
 
-  struct stack *st = (struct stack*)calloc(1,sizeof(struct stack));
-  if(st){
-
-  size_t max_rpn =  max_length * 2;//uslovno
-
-  char *arr = (char*)calloc(max_rpn+ 1,1);
-  if(arr){
+  struct stack st = {0};
 
       char Tab[256] = {0};
 
-      char low_prior[2] = {'+','-'};
-      char high_prior[2] = {'/','*'};
-      char open = '(';
-      char close = ')';
-      char space = ' ';
-      char equal = '=';
+      char oper[8] = {'+', '-', '/' ,'*' ,'(' ,')' ,'=',' '};
+      int priority[8] = {2,2,3,3,4,5,6,7};
 
-
-      for(int i = 0; i < sizeof(low_prior); i++){
-        Tab[low_prior[i]] = low_prio;
+      for(int i = 0; i<sizeof(oper); i++){
+        Tab[oper[i]] = priority[i];
       }
 
-      for(int i = 0; i < sizeof(high_prior); i++){
-        Tab[high_prior[i]] = high_prio;
-      }
-
-
-      Tab[open] = open_br;
-      Tab[close] = close_br;
-      Tab[space] = space;
-      Tab[equal] = equ;
 
       for(char a = 'a'; a <= 'z';a++){
         Tab[a] = operands;
@@ -233,16 +201,20 @@ if(expression){
 
     for(size_t i = 0; i < ex_size; i++){
 
-      if(i > 0 && /*Tab[expression[i - 1]] > operands &&*/ Tab[expression[i - 1]] < _space){
+      if(i > 0 && Tab[expression[i - 1]] < _space){
         last = expression[i - 1];
       }
 
       if(Tab[expression[i]] == operands){
         if(arr_ix < max_rpn){
           arr[arr_ix] = expression[i];
-        }
         arr_ix++;
-        //pushToStack(st,0,expression[i]);
+        }else{
+           return 11;
+          //code = 11;
+          i = ex_size;
+        }
+
       }else{
 
         if(Tab[expression[i]] == low_prio){
@@ -250,74 +222,96 @@ if(expression){
               if(expression[i] == '-'){
                 if(arr_ix < max_rpn){
                   arr[arr_ix] = '0';
-                }
-                arr_ix++;
-                pushToStack(st,0,expression[i]);
+                  arr_ix++;
+                  }else{
+                  return 11;
+                  //code = 11;
+                    i = ex_size;
+                  }
+                pushToStack(&st,0,expression[i]);
                }
           }else{
-            while(st->next && (Tab[st->next->cx] == low_prio || Tab[st->next->cx] == high_prio)){
+            while(st.next && (Tab[st.next->cx] == low_prio || Tab[st.next->cx] == high_prio)){
               char buf = 0;
-              popFromStack(st,NULL,&buf);
+              popFromStack(&st,NULL,&buf);
               if(arr_ix < max_rpn){
                 arr[arr_ix] = buf;
-              }
-              arr_ix ++;
+                arr_ix++;
+                }else{
+                  return 11;
+                  //code = 11;
+                  i = ex_size;
+                }
             }
-            pushToStack(st,0,expression[i]);
+            pushToStack(&st,0,expression[i]);
           }
         }else{
 
           if(Tab[expression[i]] == high_prio){
 
-            if(st->size > 0 && (Tab[st->next->cx] == high_prio)){
+            if(st.size > 0 && (Tab[st.next->cx] == high_prio)){
                 char buf = 0;
-                popFromStack(st,NULL,&buf);
+                popFromStack(&st,NULL,&buf);
               if(arr_ix < max_rpn){
                 arr[arr_ix] = buf;
-              }
-                arr_ix ++;
+                arr_ix++;
+                }else{
+                  return 11;
+                  //code = 11;
+                  i = ex_size;
+                }
             }
-            pushToStack(st,0,expression[i]);
+            pushToStack(&st,0,expression[i]);
 
           } else{
             if(Tab[expression[i]] == open_br){
 
-                pushToStack(st,0,expression[i]);
+                pushToStack(&st,0,expression[i]);
 
             } else {
               if(Tab[expression[i]] == close_br){
 
-            while(st->size > 0 && Tab[st->next->cx] != open_br){
+            while(st.size > 0 && Tab[st.next->cx] != open_br){
                 char buf = 0;
-                popFromStack(st,NULL,&buf);
+                popFromStack(&st,NULL,&buf);
               if(arr_ix < max_rpn){
                 arr[arr_ix] = buf;
-              }
-                arr_ix ++;
+                arr_ix++;
+                }else{
+                  return 11;
+                  //code = 11;
+                  i = ex_size;
+                }
             }
 
-            if(st->size == 0){
-                code = 2;
+            if(st.size == 0){
+               // code = 2;
+              return 2;
               i = ex_size;
             }else{
 
-                popFromStack(st,NULL,NULL);
+                popFromStack(&st,NULL,NULL);
 
             }
               } else {
                 if(Tab[expression[i]] == equ){
-                   while(st->next && Tab[st->next->cx] != open_br){
+                   while(st.next && Tab[st.next->cx] != open_br){
                     char buf = 0;
-                    popFromStack(st,NULL,&buf);
+                    popFromStack(&st,NULL,&buf);
                   if(arr_ix < max_rpn){
                     arr[arr_ix] = buf;
-                  }
-                    arr_ix ++;
+                    arr_ix++;
+                    }else{
+                      // code = 11;
+                      return 11;
+                      i = ex_size;
+                    }
             }
-                  pushToStack(st,0,expression[i]);
+                  pushToStack(&st,0,expression[i]);
                 } else {
                   if(Tab[expression[i]] != _space){
-                    code = 9;//return NULL;
+                    //code = 9;//return NULL;
+                    return 9;
                     i = ex_size;
                   }
                 }
@@ -331,40 +325,44 @@ if(expression){
     }
 if(code == 0){
   //bool cont = true;
-  while(st->size && !code){
+  while(st.size && !code){
     char buf = 0;
-    popFromStack(st,NULL,&buf);
-    arr[arr_ix] = buf;
-
+    popFromStack(&st,NULL,&buf);
+  if(arr_ix < max_rpn){
+      arr[arr_ix] = buf;
+  }else{
+return 11;
+  //code = 11;
+}
+  if(arr_ix < max_rpn){
     if(Tab[arr[arr_ix]] == open_br){
-      code = 4;
+      //code = 4;
+    return 4;
     }
     arr_ix ++;
 
   }
+}
 
-  return arr;
+
 }else{
-code = 7;
-free(arr);
+//code = 7;
+return 7;
 
 }
-freeStack(&st);
-}else{
-  code = 6;
-  freeStack(&st);
+if(arr_ix < max_rpn){
+arr[arr_ix] = '\0';
 }
-}else{
-  code = 5;
-}
-//}
+
+clearStack(&st);
+
+
 }else {
-  code = 3;
+//  code = 3;
+return 3;
 }
-if(err_code){
-  *err_code = code;
-}
-return NULL;
+
+return 0;//code;
 
 }
 
@@ -372,9 +370,8 @@ return NULL;
 double calculate(char* expression, int* Tab, char *prefix,int* err_code){
 int code = 0;
 if(expression && Tab){
-  struct stack *st = (struct stack*)calloc(1,sizeof(struct stack));
-
-  if(st){
+  struct stack st = {0};//*st = (struct stack*)calloc(1,sizeof(struct stack));
+  //if(st){
     size_t ex_size = strlen(expression);
     double temp1 = 0;
     double temp2 = 0;
@@ -387,33 +384,33 @@ if(expression && Tab){
     for(size_t i = 0; i < ex_size;i++){
 
       if(expression[i] >= 'a' && expression[i] <= 'z' || expression[i] >= 'A' && expression[i] <= 'Z'|| expression[i] >= '0' && expression[i] <= '9'){//Tab[expression[i]] || expression[i] == '0' || i == 0){
-        pushToStack(st,Tab[expression[i]],expression[i]);//for = symbol
+        pushToStack(&st,Tab[expression[i]],expression[i]);//for = symbol
 
       }else{
-if(st->size < 2){
+if(st.size < 2){
  // return 0;
 code = 1;
 
 i = ex_size;
 }else{//error
-          popFromStack(st,&temp2,&name1);
-          popFromStack(st,&temp1,&name2);
+          popFromStack(&st,&temp2,&name1);
+          popFromStack(&st,&temp1,&name2);
         if(expression[i] == '+'){
           res = temp1 + temp2;
-          pushToStack(st,res,0);
+          pushToStack(&st,res,0);
         } else {
           if(expression[i] == '-'){
             res = temp1 - temp2;
-            pushToStack(st,res,0);
+            pushToStack(&st,res,0);
           }else{
             if(expression[i] == '*'){
               res = temp1 * temp2;
-              pushToStack(st,res,0);
+              pushToStack(&st,res,0);
             }else {
               if(expression[i] == '/'){
                 if(temp2 != 0){
                   res = temp1 / temp2;
-                  pushToStack(st,res,0);
+                  pushToStack(&st,res,0);
                 }else{
                     code = 10;
                   i = ex_size;
@@ -421,7 +418,7 @@ i = ex_size;
               } else {
                 if(expression[i] == '='){
                 if(!equality){
-                  pushToStack(st,temp2,name2);
+                  pushToStack(&st,temp2,name2);
                   if(name2 >= 'a' && name2 <= 'z' || name2 >= 'A' && name2 <= 'Z'){
                       *prefix = name2;//buf;
                       equality = true;
@@ -445,16 +442,13 @@ i = ex_size;
     }
 }//
 }
-if(st->size == 1 && code == 0){
-  popFromStack(st,&res,NULL);
-  freeStack(&st);
+if(st.size == 1 && code == 0){
+  popFromStack(&st,&res,NULL);
+  clearStack(&st);
   return res;
 }
-freeStack(&st);
-  }else{
+clearStack(&st);
 
-code = 3;
-}
 } else{
 
 code = 4;
@@ -469,20 +463,21 @@ return 0;
 
 int main()
 {
-int *Tab= NULL;
-char *str = NULL;;
+int Tab[256]={0};// NULL;
+char str[2000] = {0};
+char arr[2000] = {0};
 int code = 0;
 char file[] = "test.txt";//"test2.txt";//"test3.txt";//"test4.txt";//"test5.txt";//"test6.txt";//"test7.txt";//"test8.txt";//"test9.txt";//"test10.txt";//"test11.txt";//"test12.txt";//"test13.txt";//"test14.txt";//"test15.txt";//"test16.txt";//"test17.txt";//"test18.txt";//"test19.txt";//"test20.txt";
-if((code = parseFile(file,&Tab,&str)) != 0){
+if((code = parseFile(file,Tab,str,max_len)) != 0){
   printf("error %d",code);
 }
 
 if(str){
   printf("\n%s\n",str);
 }
-char *text = convertToRPN(str,&code);
-if(text){
-    printf("\n%s\n",text);
+code = convertToRPN(str,arr,2000);
+if(!code){
+    printf("\n%s\n",arr);
 }else{
    printf("error %d",code);
 }
@@ -490,7 +485,7 @@ if(text){
 
 char pref = 0;
 code = 0;
-double res = calculate(text,Tab,&pref,&code);
+double res = calculate(arr,Tab,&pref,&code);
 if(!code){
   if(pref){
     printf("%c = %g\n",pref,res);
@@ -502,7 +497,7 @@ if(!code){
 }
 
 
-free(Tab);
-free(str);
+//free(Tab);
+//free(str);
     return 0;
 }
