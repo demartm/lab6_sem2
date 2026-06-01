@@ -97,7 +97,7 @@ FILE *f = fopen(file,"r");
 if(f){
 
   char *buff = str;//(char*)calloc(max_length+1,1);
-  if(buff){
+ // if(buff){
     //*Tab = (int*)calloc(256,sizeof(int));
 
     //if(*Tab){
@@ -139,12 +139,12 @@ buff[size] = '\0';
 code = 4;
 
 }
-}else{
+// }else{
 
-  //free(buff);
-  code = 1;
+//   //free(buff);
+//   code = 1;
 
-}
+// }
 }
   if(fclose(f) != 0){
     code = 2;
