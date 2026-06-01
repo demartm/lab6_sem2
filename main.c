@@ -42,7 +42,7 @@ if(st){
   }
 
 }
-  return;
+
 }
 
 void popFromStack(struct stack* st,double *num,char* cx){
@@ -70,7 +70,6 @@ if(st){
 
 }
 
-return;
 }
 
 
@@ -97,7 +96,7 @@ FILE *f = fopen(file,"r");
 if(f){
 
   char *buff = str;
-  if(buff){
+  // if(buff){
 
     char b = 0;
 
@@ -136,11 +135,11 @@ buff[size] = '\0';
 code = 4;
 
 }
-}else{
+// }else{
 
-  code = 1;
+//   code = 1;
 
-}
+// }
 }
   if(fclose(f) != 0){
     code = 2;
