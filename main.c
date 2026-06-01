@@ -90,7 +90,7 @@ struct point* cur = st->top;
 int parseFile(char *file, int *Tab, char *str,size_t max_length){
 int code = 0;
 
-if(file && Tab && str){
+if(file && Tab && str && max_length){
 
 FILE *f = fopen(file,"r");
 if(f){
@@ -155,7 +155,7 @@ return code;
 
 int convertToRPN(char *expression,char*arr,size_t max_rpn){
 int code = 0;
-if(expression){
+if(expression && arr &&max_rpn){
 
 
   /*
@@ -368,7 +368,7 @@ return 0;//code;
 
 double calculate(char* expression, int* Tab, char *prefix,int* err_code){
 int code = 0;
-if(expression && Tab){
+if(expression && Tab && prefix){
   struct stack st = {0};//*st = (struct stack*)calloc(1,sizeof(struct stack));
   //if(st){
     size_t ex_size = strlen(expression);
