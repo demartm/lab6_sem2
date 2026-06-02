@@ -189,9 +189,9 @@ if(expression && arr && max_rpn){
       char Tab[256] = {0};
 
       char oper[8] = {'+', '-', '/' ,'*' ,'(' ,')' ,'=',' '};
-      int priority[8] = {2,2,3,3,4,5,6,7};
+      int opsize = sizeof(oper);
 
-      for(int i = 0; i<sizeof(oper); i++){
+      for(int i = 0; i<opsize; i++){
         Tab[oper[i]] = priority[i];
       }
 
