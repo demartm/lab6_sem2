@@ -189,7 +189,10 @@ if(expression && arr && max_rpn){
       char Tab[256] = {0};
 
       char oper[8] = {'+', '-', '/' ,'*' ,'(' ,')' ,'=',' '};
+<<<<<<< HEAD
       int priority[8] = {2,2,3,3,4,5,6,7};
+=======
+>>>>>>> devTest
       int opsize = sizeof(oper);
 
       for(int i = 0; i<opsize; i++){
@@ -226,7 +229,11 @@ if(expression && arr && max_rpn){
         arr_ix++;
         }else{
           code = 11;
+<<<<<<< HEAD
           //i = ex_size;
+=======
+          i = ex_size;
+>>>>>>> devTest
         }
         //pushToStack(st,0,expression[i]);
       }else{
@@ -329,7 +336,11 @@ if(expression && arr && max_rpn){
             }
               } else {
                 if(Tab[expression[i]] == equ){
+<<<<<<< HEAD
                 double top = 0;
+=======
+                  double top = 0;
+>>>>>>> devTest
                    while(showTop(&st,&top) && Tab[(int)top] != open_br){//st.top && Tab[(int)(st.top->x)] != open_br){
                     char buf = 0;
 
@@ -385,13 +396,23 @@ if(!popFromStack(&st,NULL,&buf)){
 }
 
   //return code;
+<<<<<<< HEAD
 }/*else{
+=======
+}else{
+>>>>>>> devTest
 code = 7;
 
 }*/
 if(arr_ix < max_rpn){
 arr[arr_ix] = '\0';
 }
+<<<<<<< HEAD
+=======
+if(arr_ix < max_rpn){
+arr[arr_ix] = '\0';
+}
+>>>>>>> devTest
 
 clearStack(&st);
 
